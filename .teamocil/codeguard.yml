@@ -1,0 +1,67 @@
+windows:
+  - name: comms
+    root: ~
+    splits:
+      - cmd: alpine
+      - cmd: finch
+        width: 25
+  - name: cgdev
+    root: ~/codeguard
+    filters:
+      before: 
+        - "rvm use 1.8.7"
+        - "rvm gemset use cg"
+    splits:
+      - cmd: "git status"
+      - cmd: 
+        - "tail -f log/development.log"
+        width: 50
+      - cmd:
+          - "script/console"
+        height: 30
+      - cmd:
+          - "script/server"
+  - name: jobs
+    root: ~/codeguard
+    filters:
+      before: 
+        - "rvm use 1.8.7"
+        - "rvm gemset use cg"
+    splits: 
+      - cmd: "tail -f log/development.log"
+      - cmd: 
+        - "script/delayed_pull_job start"
+        - "watch -n 1 'ps aux | grep pull_delayed_job'"
+        width: 50
+      - cmd: 
+        - "script/delayed_activate_job start"
+        - "watch -n 1 'ps aux | grep activate_delayed_job'"
+      - cmd: 
+        - "script/delayed_job start"
+        - "watch -n 1 'ps aux | grep \" delayed_job \"'"
+  - name: prod
+    root: ~
+    filters:       
+      before: "rvm use 1.8.7"
+    splits:
+      - cmd: 
+        - "sh bin/ssh_prod"
+        - "top"
+      - cmd: 
+        - "ssh -i bin/deploy deploy@job1.codeguard.com"
+        - "top"
+        width: 60
+      - cmd: 
+        - "ssh -i bin/deploy deploy@job2.codeguard.com"
+        - "top"
+  - name: stage
+    root: ~
+    filters:       
+      before: "rvm use 1.8.7"
+    splits:
+      - cmd: 
+        - "sh bin/ssh_stage.sh"
+      - cmd:
+        - "sh bin/ssh_stage.sh"
+        - "./cg_staging_console.sh"
+        width: 50
