@@ -1,10 +1,10 @@
 windows:
-  - name: comms
+  - name: bash
     root: ~
-    splits:
-      - cmd: alpine
-      - cmd: finch
-        width: 25
+    filters:
+      before: 
+        - "rvm use 1.8.7"
+        - "rvm gemset use cg"
   - name: cgdev
     root: ~/codeguard
     filters:
@@ -28,17 +28,9 @@ windows:
         - "rvm use 1.8.7"
         - "rvm gemset use cg"
     splits: 
+      - cmd: "echo how about some workers?"
       - cmd: "tail -f log/development.log"
-      - cmd: 
-        - "script/delayed_pull_job start"
-        - "watch -n 1 'ps aux | grep pull_delayed_job'"
         width: 50
-      - cmd: 
-        - "script/delayed_activate_job start"
-        - "watch -n 1 'ps aux | grep activate_delayed_job'"
-      - cmd: 
-        - "script/delayed_job start"
-        - "watch -n 1 'ps aux | grep \" delayed_job \"'"
   - name: prod
     root: ~
     filters:       
