@@ -15,6 +15,9 @@ alias lp="ls -p"
 alias h=history
 alias ls='ls -lahG'
 
+# Real time, multi console bash history updates 
+export PROMPT_COMMAND="history -n; history -a"
+
 PS1="\$(~/.rvm/bin/rvm-prompt v g) $PS1"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
